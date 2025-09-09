@@ -1,0 +1,58 @@
+{
+  "name": "electron-native-addon-examples",
+  "version": "1.0.0",
+  "main": "main.js",
+  "homepage": "https://github.com/yourusername/electron-native-addon-examples",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/electron-native-addon-examples.git"
+  },
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --enable-logging",
+    "build": "node-gyp rebuild",
+    "rebuild": "electron-rebuild",
+    "clean": "node-gyp clean",
+    "configure": "node-gyp configure",
+    "compile": "node-gyp build",
+    "install-deps": "npm install && npm run rebuild",
+    "test": "echo \"Native addon testleri için uygulamayı başlatın: npm start\"",
+    "dist": "electron-builder"
+  },
+  "keywords": [
+    "electron",
+    "native-addon",
+    "cpp",
+    "napi",
+    "node-addon-api",
+    "mathematics",
+    "cryptography",
+    "file-operations",
+    "system-info",
+    "performance-testing",
+    "benchmark"
+  ],
+  "author": {
+    "name": "Ertuğrul Aktepe",
+    "email": "ertugrulaktepe71@gmail.com"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "node-addon-api": "^7.1.0"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "electron-rebuild": "^3.2.9",
+    "node-gyp": "^10.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ]
+}

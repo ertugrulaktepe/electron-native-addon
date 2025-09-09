@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Electron Native Code Examples</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --primary-color: #6366f1;
+        --secondary-color: #8b5cf6;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-tertiary: #334155;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #64748b;
+        --border-color: #475569;
+        --glass-bg: rgba(255, 255, 255, 0.1);
+        --glass-border: rgba(255, 255, 255, 0.2);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        color: var(--text-primary);
+        min-height: 100vh;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .header h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+      }
+
+      .header p {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        font-weight: 300;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--glass-border);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+      }
+
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        border-color: var(--primary-color);
+      }
+
+      .card h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .card-icon {
+        font-size: 1.75rem;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      }
+
+      .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .btn:hover::before {
+        left: 100%;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--success-color), #059669);
+      }
+
+      .btn-warning {
+        background: linear-gradient(135deg, var(--warning-color), #d97706);
+      }
+
+      .btn-error {
+        background: linear-gradient(135deg, var(--error-color), #dc2626);
+      }
+
+      .info-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--glass-border);
+        margin-bottom: 2rem;
+      }
+
+      .version-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .version-item {
+        background: var(--bg-tertiary);
+        padding: 1rem;
+        border-radius: 12px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+      }
+
+      .version-label {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+      }
+
+      .version-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .result-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--glass-border);
+        margin-top: 2rem;
+        display: none;
+        animation: slideUp 0.3s ease-out;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .result-content {
+        font-size: 1rem;
+        line-height: 1.8;
+      }
+
+      .result-content h4 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .result-content div {
+        margin-bottom: 0.75rem;
+        padding: 0.75rem;
+        background: var(--bg-tertiary);
+        border-radius: 8px;
+        border-left: 4px solid var(--primary-color);
+      }
+
+      .code-block {
+        background: var(--bg-primary);
+        padding: 1rem;
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.875rem;
+        overflow-x: auto;
+        border: 1px solid var(--border-color);
+        margin: 1rem 0;
+      }
+
+      .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+        animation: pulse 2s infinite;
+      }
+
+      .status-success {
+        background: var(--success-color);
+      }
+
+      .status-error {
+        background: var(--error-color);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .footer {
+        text-align: center;
+        padding: 2rem 0;
+        color: var(--text-muted);
+        border-top: 1px solid var(--border-color);
+        margin-top: 3rem;
+      }
+
+      .footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        .header h1 {
+          font-size: 2.5rem;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+        }
+
+        .card {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🚀 Electron Native Code</h1>
+        <p>Modern Electron uygulamasında C++ Native Addon örnekleri</p>
+      </div>
+
+      <div class="info-panel">
+        <h3>📊 Sistem Bilgileri</h3>
+        <div class="version-grid">
+          <div class="version-item">
+            <div class="version-label">Node.js</div>
+            <div class="version-value" id="node-version">-</div>
+          </div>
+          <div class="version-item">
+            <div class="version-label">Chromium</div>
+            <div class="version-value" id="chrome-version">-</div>
+          </div>
+          <div class="version-item">
+            <div class="version-label">Electron</div>
+            <div class="version-value" id="electron-version">-</div>
+          </div>
+          <div class="version-item">
+            <div class="version-label">Platform</div>
+            <div class="version-value" id="platform">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>
+            <div class="card-icon">🧮</div>
+            Matematik Fonksiyonları
+          </h3>
+          <div class="button-group">
+            <button class="btn btn-success" onclick="testMathFunctions()"><span>🔢</span> Matematik Testleri</button>
+            <button class="btn" onclick="testAdvancedMath()"><span>📐</span> Gelişmiş Matematik</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>
+            <div class="card-icon">💻</div>
+            Sistem İşlemleri
+          </h3>
+          <div class="button-group">
+            <button class="btn btn-warning" onclick="getDetailedSystemInfo()"><span>📋</span> Detaylı Sistem Bilgisi</button>
+            <button class="btn" onclick="testPerformance()"><span>⚡</span> Performans Testi</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>
+            <div class="card-icon">📁</div>
+            Dosya İşlemleri
+          </h3>
+          <div class="button-group">
+            <button class="btn" onclick="testFileOperations()"><span>📄</span> Dosya Testleri</button>
+            <button class="btn btn-warning" onclick="testEncryption()"><span>🔐</span> Şifreleme Testleri</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>
+            <div class="card-icon">🔧</div>
+            Gelişmiş Özellikler
+          </h3>
+          <div class="button-group">
+            <button class="btn btn-error" onclick="testNativeAddon()"><span>🚀</span> Tüm Native Testler</button>
+            <button class="btn" onclick="benchmarkTests()"><span>📊</span> Benchmark Testleri</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-panel" id="result-area">
+        <h3>📈 Test Sonuçları</h3>
+        <div class="result-content" id="result-content"></div>
+      </div>
+
+      <div class="footer">
+        <p>Electron + C++ Native Addon örnek projesi</p>
+      </div>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
